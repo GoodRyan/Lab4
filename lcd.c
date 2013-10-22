@@ -23,10 +23,14 @@ void initSPI(){
 }
 
 void setSlaveSelectLo(){
-
+	P1OUT &= ~BIT0;
 }
 
 void setSlaveSelectHi(){
+	P1OUT |= BIT0;
+}
+
+void SPISEND(){
 
 }
 
@@ -40,7 +44,21 @@ void LCDdelayLong(){
 
 }
 
-void LCDwriteFour(){
+void LCDwriteFour(char LCDDATA){
+	char halfCharacter = LCDDATA;
+	halfCharacter &= 0x0f;
+	halfCharacter |= LCDCON;
+	halfCharacter &= 0x7f;
+	SPISEND();
+	LCDdelayShort();
+
+	halfCharacter |= 0x80;
+	SPISEND();
+	LCDdelayShort();
+
+	halfCharacter |= 0x7f;
+	SPISEND();
+	LCDdelayShort();
 
 }
 
@@ -48,9 +66,7 @@ void LCDwriteEight(){
 
 }
 
-void SPISEND(){
 
-}
 
 void LCDinit(){
 
