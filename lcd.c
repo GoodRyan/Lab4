@@ -144,10 +144,17 @@ void LCDclear(){
 
 //might not need
 void printCharacter(char asciiChar){
-
+	writeDataByte(asciiChar);
 }
 
 void print(char * string){
+	int stringTracker = 0;
+
+	while (stringTracker < 8 && *string != 0x00){
+		printCharacter(*string);
+		string++;
+		stringTracker++;
+	}
 
 }
 

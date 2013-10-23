@@ -17,8 +17,6 @@ void secondLine();
 
 void firstLine();
 
-void printCharacter(char asciiChar);
-
 void print(char * string);
 
 void scrollString(char * string1, char * string2);

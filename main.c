@@ -13,6 +13,8 @@ int main(void) {
 	
     LCDclear();
 
+    print("hello");
+
     while(1){}
 
 	return 0;
