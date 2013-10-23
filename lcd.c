@@ -158,9 +158,37 @@ void print(char * string){
 
 }
 
-void scrollString(char * string1, char * string2){
-
+char * scrollHelper(char * start, char * current){
+	if(*current == 0){
+		current = start;
+	}
+	char * display = current;
+	int positionTracker = 0;
+	for (positionTracker = 0; positionTracker < 8; positionTracker++){
+		writeDataByte(*display);
+		display++;
+		if(*display == 0){
+			display = start;
+		}
+	}
+	return current + 1;
 }
+
+
+void scrollString(char * string1, char * string2){
+	char * startStringOne = string1;
+	char * currentStringOne = string1;
+	char * startStringTwo = string2;
+	char * currentStringTwo = string2;
+	while(1){
+		firstLine();
+		currentStringOne = scrollHelper(startStringOne, currentStringOne);
+		secondLine();
+		currentStringTwo = scrollHelper(startStringTwo, currentStringTwo);
+		_delay_cycles(300000);
+	}
+}
+
 
 void getButton(){
 
@@ -168,12 +196,12 @@ void getButton(){
 
 //moves cursor to the second line
 void secondLine(){
-
+	writeCommandByte(0xa8);
 }
 
 //moves cursor to the first line
 void firstLine(){
-
+	writeCommandByte(0x80);
 }
 
 void selectMessage(){

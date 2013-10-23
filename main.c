@@ -13,7 +13,7 @@ int main(void) {
 	
     LCDclear();
 
-    print("hello");
+    scrollString("ECE382 is my favorite class! ", "Pointers are frustrating! ");
 
     while(1){}
 
