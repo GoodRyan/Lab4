@@ -2,13 +2,14 @@
 
 #define RS_MASK 0x40
 
-char LCDCON = 0, LCDSEND = 0;
+char LCDCON = 0;// LCDSEND = 0;
 
 void initSPI(){
 	UCB0CTL1 |= UCSWRST;
+
 	UCB0CTL0 |= UCCKPH|UCMSB|UCMST|UCSYNC;
 	UCB0CTL1 |= UCSSEL1;
-	UCB0STAT |= UCLISTEN;
+	//UCB0STAT |= UCLISTEN;
 	P1DIR |= BIT0;
 
 	P1SEL |= BIT5;
@@ -21,7 +22,6 @@ void initSPI(){
 	P1SEL2 |= BIT6;
 
 	UCB0CTL1 &= ~UCSWRST;
-
 }
 
 void setSlaveSelectLo(){
@@ -33,7 +33,7 @@ void setSlaveSelectHi(){
 }
 
 void SPIsend(char byteToSend){
-	char readByte;
+	volatile char readByte;
 
 	setSlaveSelectLo();
 
@@ -71,7 +71,7 @@ void LCDwriteFour(char LCDdata){
 	SPIsend(halfCharacter);
 	LCDdelayShort();
 
-	halfCharacter |= 0x7f;
+	halfCharacter &= 0x7f;
 	SPIsend(halfCharacter);
 	LCDdelayShort();
 
@@ -139,7 +139,7 @@ void LCDinit(){
 }
 
 void LCDclear(){
-
+	writeCommandByte(1);
 }
 
 //might not need
