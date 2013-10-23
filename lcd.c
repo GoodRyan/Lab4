@@ -1,5 +1,7 @@
 #include "lcd.h"
 
+#define RS_MASK 0x40
+
 char LCDCON = 0, LCDSEND = 0;
 
 void initSPI(){
@@ -30,46 +32,110 @@ void setSlaveSelectHi(){
 	P1OUT |= BIT0;
 }
 
-void SPISEND(){
+void SPIsend(char byteToSend){
+	char readByte;
+
+	setSlaveSelectLo();
+
+	UCB0TXBUF = byteToSend;
+
+	while(!(UCB0RXIFG & IFG2)){
+		//waiting for byte
+	}
+
+	readByte = UCB0RXBUF;
+
+	setSlaveSelectHi();
 
 }
 
 //formerly LCDDELAY1 in assembly
 void LCDdelayShort(){
-
+	_delay_cycles(100);
 }
 
 //formerly LCDDELAY2 in assembly
 void LCDdelayLong(){
-
+	_delay_cycles(1900);
 }
 
-void LCDwriteFour(char LCDDATA){
-	char halfCharacter = LCDDATA;
+void LCDwriteFour(char LCDdata){
+	char halfCharacter = LCDdata;
 	halfCharacter &= 0x0f;
 	halfCharacter |= LCDCON;
 	halfCharacter &= 0x7f;
-	SPISEND();
+	SPIsend(halfCharacter);
 	LCDdelayShort();
 
 	halfCharacter |= 0x80;
-	SPISEND();
+	SPIsend(halfCharacter);
 	LCDdelayShort();
 
 	halfCharacter |= 0x7f;
-	SPISEND();
+	SPIsend(halfCharacter);
 	LCDdelayShort();
 
 }
 
-void LCDwriteEight(){
+void LCDwriteEight(char byteToSend){
+	unsigned char sendByte = byteToSend;
+
+	sendByte &= 0xF0;
+
+	sendByte = sendByte >> 4;
+
+	LCDwriteFour(sendByte);
+
+	sendByte = byteToSend;
+
+	sendByte &= 0x0F;
+
+	LCDwriteFour(sendByte);
+
 
 }
 
+void writeCommandNibble(char commandNibble){
+	LCDCON &= ~RS_MASK;
+	LCDwriteFour(commandNibble);
+	LCDdelayLong();
+}
 
+void writeCommandByte(char commandByte){
+	LCDCON &= ~RS_MASK;
+	LCDwriteEight(commandByte);
+	LCDdelayLong();
+}
+
+void writeDataByte(char dataByte){
+	LCDCON |= RS_MASK;
+	LCDwriteEight(dataByte);
+	LCDdelayLong();
+}
 
 void LCDinit(){
+	writeCommandNibble(0x03);
 
+	writeCommandNibble(0x03);
+
+	writeCommandNibble(0x03);
+
+    writeCommandNibble(0x02);
+
+    writeCommandByte(0x28);
+
+    writeCommandByte(0x0C);
+
+    writeCommandByte(0x01);
+
+    writeCommandByte(0x06);
+
+    writeCommandByte(0x01);
+
+    writeCommandByte(0x02);
+
+    SPIsend(0);
+    LCDdelayShort();
 }
 
 void LCDclear(){
