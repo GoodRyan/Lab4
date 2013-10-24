@@ -3,23 +3,30 @@ Lab4
 
 Device driver for LCD in geek box.
 
-This will have more info in it soon.
+The purpose of this library is to allow the user to interface with the geek box LCD
+using an MSP 430. It allows the user to print scrolling messages to the screen, and to
+allow user interaction via buttons 1 through 3.
 
 Functions
 ===
 
-void initSPI()
+void initSPI(); initializes the Serial Periferal Interface.
 
-void LCDinit();
+void LCDinit(); initializes the LCD screen.
 
-void LCDclear();
+void LCDclear(); Clears the LCD screen.
 
-void secondLine();
+The above three functions should be implemented in main before using any other functions in this library.
 
-void firstLine();
+void secondLine(); Moves cursor to the second line.
 
-void print(char * string);
+void firstLine(); Moves cursor to the first line.
 
-void scrollString(char * string1, char * string2)
+void print(char * string); given a pointer to the start of a string, prints the string to the LCD
+String must be less than 8 characters.
 
-void selectMessage();
+void scrollString(char * string1, char * string2); given a pointer to the start of two strings, scrolls them
+on the first and second line respectively. 
+
+void selectMessage(); allows the user to select a line to scroll accross the bottom of the LCD, along with a 
+provided message that scrolls accross the top.
