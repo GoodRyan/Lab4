@@ -1,11 +1,13 @@
 #include <msp430.h> 
 #include "lcd.h"
+#include "button.h"
 
 /*
  * main.c
  */
 int main(void) {
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+    char buttonPressed = 0;
 
     initSPI();
 
@@ -13,7 +15,12 @@ int main(void) {
 	
     LCDclear();
 
-    scrollString("ECE382 is my favorite class! ", "Pointers are frustrating! ");
+    print("Message?");
+    secondLine();
+    print("Press123");
+    firstLine();
+    buttonPressed = getButton();
+    selectMessage(buttonPressed);
 
     while(1){}
 

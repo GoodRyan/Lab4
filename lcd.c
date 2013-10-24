@@ -1,4 +1,5 @@
 #include "lcd.h"
+#include "button.h"
 
 #define RS_MASK 0x40
 
@@ -187,11 +188,28 @@ void scrollString(char * string1, char * string2){
 		currentStringTwo = scrollHelper(startStringTwo, currentStringTwo);
 		_delay_cycles(300000);
 	}
+
 }
 
 
-void getButton(){
-
+char getButton(){
+	char buttonPressed = 0;
+	configureP1PinAsButton(BIT1|BIT2|BIT3);
+	while (buttonPressed != 1 && buttonPressed != 2 && buttonPressed != 3){
+	if(isP1ButtonPressed(BIT1)){
+		waitForP1ButtonRelease(BIT1);
+		buttonPressed = 1;
+	}
+	if(isP1ButtonPressed(BIT2)){
+		waitForP1ButtonRelease(BIT2);
+		buttonPressed = 2;
+	}
+	if(isP1ButtonPressed(BIT3)){
+		waitForP1ButtonRelease(BIT3);
+		buttonPressed = 3;
+	}
+	}
+	return buttonPressed;
 }
 
 //moves cursor to the second line
@@ -204,10 +222,14 @@ void firstLine(){
 	writeCommandByte(0x80);
 }
 
-void selectMessage(){
-
-}
-
-void debounce(){
-
+void selectMessage(char buttonPressed){
+	if(buttonPressed == 1){
+		scrollString("ECE382 is my favorite class!", "You pressed the first button");
+	}
+	else if(buttonPressed == 2){
+		scrollString("ECE382 is my favorite class!", "You pressed the second button");
+	}
+	else if(buttonPressed == 3){
+		scrollString("ECE382 is my favorite class!", "You pressed the third button");
+	}
 }
